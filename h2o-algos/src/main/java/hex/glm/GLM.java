@@ -61,11 +61,26 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
   public String _generatedWeights = null;
   public String[] _randCoeffNames = null;
   public String[] _randomColNames = null;
+  public double[][][] _penaltyMatrix = null;
+  public String[][] _gamColnames = null;
   public GLM(boolean startup_once){super(new GLMParameters(),startup_once);}
   public GLM(GLMModel.GLMParameters parms) {
     super(parms);
     init(false);
   }
+
+  /***
+   * This constructor is only called by GAM when it is trying to build a GAM model using GLM.  
+   * 
+   * Internal function, DO NOT USE.
+   */
+  public GLM(GLMModel.GLMParameters parms, double[][][] penaltyMatrix, String[][] gamColnames) {
+    super(parms);
+    init(false);
+    _penaltyMatrix = penaltyMatrix;
+    _gamColnames = gamColnames;
+  }
+  
   public GLM(GLMModel.GLMParameters parms,Key dest) {
     super(parms,dest);
     init(false);
@@ -3094,7 +3109,7 @@ public class GLM extends ModelBuilder<GLMModel,GLMParameters,GLMOutput> {
     }
   }
 
-  static class PlugValuesImputer implements DataInfo.Imputer {
+  public static class PlugValuesImputer implements DataInfo.Imputer { // make public to allow access to other algos
     private final Frame _plug_vals;
 
     public PlugValuesImputer(Frame plugValues) {
